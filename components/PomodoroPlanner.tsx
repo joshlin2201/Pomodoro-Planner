@@ -146,6 +146,12 @@ export default function PomodoroPlanner() {
         }
     }, [pomodoroType, totalTime, generateSessions]);
 
+    useEffect(() => {
+        if (window) {
+            (window.adsbygoogle = window.adsbygoogle || []).push({});
+        }
+    }, []);
+
     const toggleTimer = () => {
         if (sessions.length === 0) {
             setMessage('Please set up sessions first');
@@ -342,6 +348,14 @@ export default function PomodoroPlanner() {
                         </CardContent>
                     </Card>
                 )}
+                <div className="my-4">
+                    <div className="text-center text-gray-500">Ad Placeholder (300x250)</div>
+                    <ins className="adsbygoogle"
+                         style={{display: 'block', width: '300px', height: '250px'}}
+                         data-ad-client="ca-pub-XXXXXX" // Replace with your AdSense client ID
+                         data-ad-slot="XXXXXX" // Replace with your AdSense slot ID
+                         data-ad-format="auto"></ins>
+                </div>
             </div>
         </div>
     );
