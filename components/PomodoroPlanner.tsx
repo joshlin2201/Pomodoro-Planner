@@ -211,7 +211,7 @@ export default function PomodoroPlanner() {
     };
 
     return (
-        <div className="flex justify-center space-x-4">
+        <div className="flex flex-col md:flex-row justify-center space-x-4">
             <audio ref={audioRef} src="/bell-happy.mp3"/>
             <Card className="w-96">
                 <CardHeader>
