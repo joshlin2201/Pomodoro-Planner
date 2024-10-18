@@ -157,6 +157,7 @@ export default function PomodoroPlanner() {
             setMessage('Please set up sessions first');
             return;
         }
+        
         if (!isRunning) {
             lastTickRef.current = Date.now();
             if (!hasStarted) {
@@ -164,7 +165,10 @@ export default function PomodoroPlanner() {
                 setMessage('Session Started. Good Luck!');
             }
             sessionStartTimeRef.current = Date.now();
+        } else {
+            setMessage('Session Paused');
         }
+        
         setIsRunning(!isRunning);
     };
 
@@ -184,7 +188,7 @@ export default function PomodoroPlanner() {
     const removeTodoItem = (id: number) => setTodoList(t => t.filter(item => item.id !== id));
 
     const concludeEarly = () => {
-        setMessage('Session concluded early');
+        setMessage('Session Skipped');
         handleSessionComplete(true);
     };
 
@@ -217,29 +221,29 @@ export default function PomodoroPlanner() {
     };
 
     return (
-        <div className="flex flex-col md:flex-row justify-center space-x-4">
+        <div className="flex flex-col md:flex-row justify-center space-x-7">
             <audio ref={audioRef} src="/bell-happy.mp3"/>
-            <Card className="w-96">
+            <Card className="w-96 border-timer flex-shrink-0 h-566">
                 <CardHeader>
-                    <CardTitle>Pomodoro Timer</CardTitle>
+                    <CardTitle>Pomodoro Planner</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-6">
+                <CardContent className="space-y-5 p-4 ">
                     <div className="flex flex-col items-center">
                         <div className="text-6xl font-bold mb-2">{formatTime(timeLeft)}</div>
-                        <div className="text-sm mb-2">{sessions[0]?.name || "Ready to start"}</div>
-                        <div className="h-6 text-green-500 font-bold mb-2">{message}</div>
+                        <div className="text-sm mb-2">{sessions[0]?.name || "Set Up Timer Below"}</div>
+                        <div className="h-6 text-green-500 font-bold mb-1">{message}</div>
                         <div className="flex space-x-2 mb-4">
-                            <Button onClick={toggleTimer} variant="outline" disabled={sessions.length === 0}>
+                            <Button onClick={toggleTimer} className="button" variant="default" disabled={sessions.length === 0}>
                                 {isRunning ? <Pause className="h-4 w-4 mr-2"/> : <Play className="h-4 w-4 mr-2"/>}
-                                {isRunning ? "Pause" : "Start"}
-                            </Button>
-                            <Button onClick={resetTimer} variant="outline">
-                                <RotateCcw className="h-4 w-4 mr-2"/>Reset
+                                {isRunning ? "Pause" : hasStarted ? "Resume" : "Start"}
+                                </Button>
+                            <Button onClick={resetTimer} className="button" variant="outline">
+                                <RotateCcw className="h-4 w-4 mr-2" />Reset
                             </Button>
                             {isRunning && (
-                                <Button onClick={concludeEarly} variant="outline">
-                                    <FastForward className="h-4 w-4 mr-2"/>
-                                    Conclude Early
+                                <Button onClick={concludeEarly} variant="secondary" className="button">
+                                    <FastForward className="h-4 w-4 mr-2" />
+                                    Skip
                                 </Button>
                             )}
                         </div>
@@ -250,12 +254,12 @@ export default function PomodoroPlanner() {
                             setPomodoroType(value);
                             setTotalTime(null);
                         }}>
-                            <SelectTrigger>
+                            <SelectTrigger className="dropdown">
                                 <SelectValue placeholder="Choose Your Pomodoro Format"/>
                             </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="short">Short Pomodoro (25min Sessions)</SelectItem>
-                                <SelectItem value="long">Long Pomodoro (50min Sessions)</SelectItem>
+                            <SelectContent className="dropdown">
+                                <SelectItem value="short" className="dropdown-item">Short Pomodoro (25min Sessions)</SelectItem>
+                                <SelectItem value="long" className="dropdown-item">Long Pomodoro (50min Sessions)</SelectItem>
                             </SelectContent>
                         </Select>
 
@@ -268,13 +272,13 @@ export default function PomodoroPlanner() {
                                     generateSessions();
                                 }}
                             >
-                                <SelectTrigger>
+                                <SelectTrigger className="dropdown">
                                     <SelectValue placeholder="Total Work Time"/>
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent className="dropdown">
                                     {getTotalTimeOptions().map((time) => (
                                         <SelectItem key={time}
-                                                    value={time.toString()}>{formatTotalTime(time)}</SelectItem>
+                                                    value={time.toString()} className="dropdown-item">{formatTotalTime(time)}</SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>
@@ -298,10 +302,10 @@ export default function PomodoroPlanner() {
                 </CardContent>
             </Card>
 
-            <div className="space-y-4">
-                <Card className="w-64">
+            <div className="space-y-4 flex-grow">
+                <Card className="w-64 border-todo">
                     <CardHeader>
-                        <CardTitle>To-Do List</CardTitle>
+                        <CardTitle>To-Do </CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="flex space-x-2 mb-4">
@@ -311,7 +315,7 @@ export default function PomodoroPlanner() {
                                 onKeyPress={(e) => e.key === 'Enter' && addTodoItem()}
                                 placeholder="Add a task"
                             />
-                            <Button onClick={addTodoItem} variant="outline" size="sm"><Check
+                            <Button onClick={addTodoItem} className="button" variant="default" size="sm"><Check
                                 className="h-4 w-4"/></Button>
                         </div>
                         <ul className="space-y-2">
