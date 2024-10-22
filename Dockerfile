@@ -14,7 +14,7 @@ RUN npm ci
 COPY . .
 
 # Build the Next.js application and export static files
-RUN npm run build && npm run export
+RUN npm run build 
 
 # Production environment
 FROM node:18-alpine AS production
