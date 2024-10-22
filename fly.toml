@@ -1,14 +1,19 @@
 app = "pomoplanner"
 
-
 [[services]]
-  internal_port = 3000
-  protocol = "tcp"
+internal_port = 3000  # Fixed numerical value without underscore
+protocol = "tcp"
 
   [[services.ports]]
-    handlers = ["http"]
-    port = 80
+  handlers = ["http"]
+  port = 80
 
   [[services.ports]]
-    handlers = ["tls", "http"]
-    port = 443
+  handlers = ["tls", "http"]
+  port = 443
+
+  [[services.http_checks]]  # Optional, but recommended for health checks
+  path = "/"
+  interval = "10s"
+  timeout = "2s"
+
