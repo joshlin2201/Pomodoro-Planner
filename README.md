@@ -1,9 +1,43 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Security and Configuration Setup
+
+### Environment Variables
+1. Copy the `.env.example` file to create your `.env`:
+```bash
+cp .env.example .env
+```
+2. Update the `.env` file with your actual configuration values
+3. Never commit the `.env` file - it's automatically ignored via `.gitignore`
+
+### Security Best Practices
+- Never commit sensitive information like API keys, access tokens, or credentials
+- All sensitive configuration should be stored in environment variables
+- AWS credentials should be managed through AWS CLI or environment variables
+- Keep the `.gitignore` file updated to prevent accidentally committing sensitive files
+- Regularly rotate access keys and tokens
+- Use secure HTTPS endpoints for all API communications
+
+### Configuration Files
+The following files contain sensitive information and should not be committed:
+- `*.env` files
+- `current-config.json`
+- `bucket-policy.json`
+- `distribution-config.json`
+- AWS configuration files
+
 ## Getting Started
 
-First, run the development server:
+First, set up your environment:
 
+1. Install dependencies:
+```bash
+npm install
+```
+
+2. Set up environment variables as described above
+
+3. Run the development server:
 ```bash
 npm run dev
 # or
