@@ -3,10 +3,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Play, Pause, RotateCcw, X, Check, FastForward } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button' ;
+import { Input } from '@/components/ui/input' ;
 import { Checkbox } from '@/components/ui/checkbox';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function PomodoroPlanner() {
     const [sessions, setSessions] = useState<Array<{ id: number, name: string, duration: number, isBreak: boolean, startTime: Date }>>([]);
@@ -19,10 +19,11 @@ export default function PomodoroPlanner() {
     const [pomodoroType, setPomodoroType] = useState<string | null>(null);
     const [totalTime, setTotalTime] = useState<number | null>(null);
     const [hasStarted, setHasStarted] = useState(false);
-    const timerRef = useRef<NodeJS.Timeout | null>(null);
-    const lastTickRef = useRef(Date.now());
+    const timerRef = useRef<number | null>(null);
+    const startTimeRef = useRef<number | null>(null);
     const sessionStartTimeRef = useRef<number | null>(null);
     const audioRef = useRef<HTMLAudioElement | null>(null);
+    const pausedTimeRef = useRef<number | null>(null);
 
     const resetTimer = useCallback(() => {
         setIsRunning(false);
@@ -35,6 +36,12 @@ export default function PomodoroPlanner() {
         setMessage("");
         setHasStarted(false);
         sessionStartTimeRef.current = null;
+        startTimeRef.current = null;
+        pausedTimeRef.current = null;
+        if (timerRef.current) {
+            cancelAnimationFrame(timerRef.current);
+            timerRef.current = null;
+        }
     }, []);
 
     const handleSessionComplete = useCallback((isEarlyConclusion = false) => {
@@ -55,6 +62,7 @@ export default function PomodoroPlanner() {
             if (sessions.length > 1) {
                 setTimeLeft(sessions[1].duration * 60);
                 sessionStartTimeRef.current = Date.now();
+                startTimeRef.current = performance.now();
             } else {
                 setIsRunning(false);
                 resetTimer();
@@ -65,6 +73,43 @@ export default function PomodoroPlanner() {
             audioRef.current.play();
         }
     }, [sessions, resetTimer]);
+
+    const updateTimer = useCallback(() => {
+        if (!isRunning || !startTimeRef.current) return;
+
+        const now = performance.now();
+        const elapsed = Math.floor((now - startTimeRef.current) / 1000);
+        const targetTime = pausedTimeRef.current ?? timeLeft;
+        const newTime = Math.max(0, targetTime - elapsed);
+
+        if (newTime === 0) {
+            handleSessionComplete();
+        } else {
+            setTimeLeft(newTime);
+            timerRef.current = requestAnimationFrame(updateTimer);
+        }
+    }, [isRunning, timeLeft, handleSessionComplete]);
+
+    useEffect(() => {
+        if (isRunning) {
+            startTimeRef.current = performance.now() - ((pausedTimeRef.current ?? timeLeft) - timeLeft) * 1000;
+            pausedTimeRef.current = null;
+            timerRef.current = requestAnimationFrame(updateTimer);
+        } else {
+            if (timerRef.current) {
+                cancelAnimationFrame(timerRef.current);
+                timerRef.current = null;
+            }
+            pausedTimeRef.current = timeLeft;
+        }
+
+        return () => {
+            if (timerRef.current) {
+                cancelAnimationFrame(timerRef.current);
+                timerRef.current = null;
+            }
+        };
+    }, [isRunning, timeLeft, updateTimer]);
 
     const generateSessions = useCallback(() => {
         if (!pomodoroType || !totalTime) return;
@@ -115,30 +160,9 @@ export default function PomodoroPlanner() {
         setTimeLeft(newSessions[0].duration * 60);
         setIsRunning(false);
         setHasStarted(false);
+        startTimeRef.current = null;
+        pausedTimeRef.current = null;
     }, [pomodoroType, totalTime]);
-
-    useEffect(() => {
-        if (isRunning) {
-            timerRef.current = setInterval(() => {
-                const now = Date.now();
-                const delta = Math.floor((now - lastTickRef.current) / 1000);
-                lastTickRef.current = now;
-
-                setTimeLeft(prevTime => {
-                    const newTime = Math.max(0, prevTime - delta);
-                    if (newTime === 0) {
-                        handleSessionComplete();
-                    }
-                    return newTime;
-                });
-            }, 1000);
-        } else {
-            if (timerRef.current) clearInterval(timerRef.current);
-        }
-        return () => {
-            if (timerRef.current) clearInterval(timerRef.current);
-        };
-    }, [isRunning, handleSessionComplete]);
 
     useEffect(() => {
         if (pomodoroType && totalTime) {
@@ -159,7 +183,6 @@ export default function PomodoroPlanner() {
         }
         
         if (!isRunning) {
-            lastTickRef.current = Date.now();
             if (!hasStarted) {
                 setHasStarted(true);
                 setMessage('Session Started. Good Luck!');
