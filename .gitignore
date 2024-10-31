@@ -26,11 +26,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
-.env
 .env*.local
-.env.development
-.env.test
-.env.production
 
 # vercel
 .vercel
@@ -39,33 +35,3 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .aider*
-
-# AWS related
-bucket-policy.json
-distribution-config.json
-current-config.json
-*.aws
-aws.json
-
-# Config files
-config.json
-*-config.json
-
-# Deployment
-fly.toml
-
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# Logs
-logs
-*.log
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
