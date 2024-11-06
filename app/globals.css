@@ -14,7 +14,7 @@
   --accent-foreground: 222.2 47.4% 11.2%;
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 210 40% 98%;
-  --border: 0 0% 60%; /* Change border color to black */
+  --border: 0 0% 60%;
   --input: 100 22.9% 30%;
   --ring: 212.7 26.8% 83.9%;
   --chart-1: 220 70% 50%;
@@ -22,46 +22,66 @@
   --chart-3: 30 80% 55%;
   --chart-4: 280 65% 60%;
 }
+
+/* Timer Glow Effects */
+.text-glow-running {
+  color: #2563eb;
+  text-shadow: 0 0 10px rgba(37, 99, 235, 0.5),
+               0 0 20px rgba(37, 99, 235, 0.3),
+               0 0 30px rgba(37, 99, 235, 0.2);
+  animation: pulse 2s infinite;
+}
+
+.text-glow-paused {
+  color: #4b5563;
+  text-shadow: 0 0 10px rgba(75, 85, 99, 0.3),
+               0 0 20px rgba(75, 85, 99, 0.2);
+}
+
+@keyframes pulse {
+  0% {
+    text-shadow: 0 0 10px rgba(37, 99, 235, 0.5),
+                 0 0 20px rgba(37, 99, 235, 0.3),
+                 0 0 30px rgba(37, 99, 235, 0.2);
+  }
+  50% {
+    text-shadow: 0 0 15px rgba(37, 99, 235, 0.6),
+                 0 0 25px rgba(37, 99, 235, 0.4),
+                 0 0 35px rgba(37, 99, 235, 0.3);
+  }
+  100% {
+    text-shadow: 0 0 10px rgba(37, 99, 235, 0.5),
+                 0 0 20px rgba(37, 99, 235, 0.3),
+                 0 0 30px rgba(37, 99, 235, 0.2);
+  }
+}
+
 .border-timer {
-  border: 2px solid hsl(var(--border-timer-color, 0, 0%, 79%)); /* Adjust the color as needed */
+  border: 2px solid hsl(var(--border-timer-color, 0, 0%, 79%));
 }
 
 .border-todo {
-  border: 2px solid hsl(var(--border-todo-color, 0, 0%, 79%)); /* Adjust the color as needed */
+  border: 2px solid hsl(var(--border-todo-color, 0, 0%, 79%));
 }
-
-
 
 body {
   @apply bg-background text-foreground;
   background-color: hsl(var(--background));
 }
 
-
-
 .button:hover {
   background-color: hsl(var(--button-hover-background));
 }
 
-
-/* Additional styles for dropdowns */
+/* Dropdown Styles */
 .dropdown {
   @apply bg-white text-black border border-gray-300 rounded shadow-lg;
-  background-color: white; /* Ensure solid background */
-  z-index: 50; /* Ensure it appears above other elements */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
-}
-
-/* Additional styles for dropdowns */
-.dropdown {
-  @apply bg-white text-black border border-gray-300 rounded shadow-lg;
-  background-color: white; /* Ensure solid background */
-  z-index: 50; /* Ensure it appears above other elements */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+  background-color: white;
+  z-index: 50;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .dropdown-item {
   @apply px-4 py-2 hover:bg-gray-100 cursor-pointer relative;
   padding-left: 1.7rem;
 }
-

@@ -4,7 +4,19 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  assetPrefix: '/', // Change this to a leading slash
+  // Ensure files are copied correctly during build
+  async rewrites() {
+    return [
+      {
+        source: '/Ads.txt',
+        destination: '/Ads.txt',
+      },
+      {
+        source: '/ads.txt',
+        destination: '/Ads.txt',
+      }
+    ];
+  },
 }
 
 module.exports = nextConfig
